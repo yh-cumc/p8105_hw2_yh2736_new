@@ -1,0 +1,15 @@
+---
+title: "P8105 Homework2"
+author: "Yongmei Huang"
+date: "10/4/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+
+
+
+```
