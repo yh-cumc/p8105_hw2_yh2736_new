@@ -30,30 +30,26 @@ trashwheel_dataset$sports_balls = round(as.integer(trashwheel_dataset$sports_bal
 ```
 
 ```{r, precipitation2017, echo = TRUE}
-##load and clean the precipitation data of 2017
+##upload and clean the precipitation data of 2017
 precipitation_dataset_2017 = read_excel(path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
                                         sheet = "2017 Precipitation", 
                                         range = "A2:B14") %>%    ##load the precipitation data of 2017
   na.omit() %>%                                                  ##omit rows without precipitation data
   janitor::clean_names() %>%                                     ##clean data
-  mutate(year = c('2017', '2017', '2017', '2017',
-                  '2017', '2017', '2017', '2017',
-                  '2017', '2017', '2017', '2017'))                ##add a variable year
+  mutate(year = '2017')                                          ##add a variable year
 
 
 
 ```
 
 ```{r, precipitation2018, echo = TRUE}
-##load and clean the precipitation data of 2017
+##upload and clean the precipitation data of 2017
 precipitation_dataset_2018 = read_excel(path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
                                         sheet = "2018 Precipitation", 
                                         range = "A2:B14") %>%    ##load the precipitation data of 2017
   na.omit() %>%                                                  ##omit rows without precipitation data
   janitor::clean_names() %>%                                     ##clean data
-  mutate(year = c('2018', '2018', '2018', '2018',
-                  '2018', '2018', '2018', '2018',
-                  '2018', '2018', '2018', '2018'))                ##add a variable year
+  mutate(year = '2018')                ##add a variable year
 
 ```
 
@@ -76,4 +72,67 @@ show(precipitation_dataset)
 the number of observation in 2017 is `r count(precipitation_dataset_2017)`.
 the number of observation in 2018 is `r count(precipitation_dataset_2018)`.
 the total precipitation in 2018 is `r sum(precipitation_dataset_2018$total, na.rm = TRUE)`.
+
+
+# question 2
+```{r, pols, echo = TRUE}
+##upload and clean data in pols-month.csv
+pols_month_dataset = read_csv(file = "./data/pols-month.csv") %>%   ##load pols-month.csv
+  janitor::clean_names() %>% ##clean the dataset
+  separate(col = "mon", 
+           sep = "-", 
+           into = c("year", "month", "day"), 
+           convert = type.convert("month", "year", "day" , 
+                                  numerals = c("allow.loss"))) %>%  ##separate to year, month, day, and transfer month format "01" "02"... to "1", "2)
+  transform(month = month.abb[month]) %>%               ##replace month number with month name
+  mutate(president = case_when(
+    prez_dem == 1 ~ "dem",
+    prez_gop == 1 ~ "gop",
+    TRUE ~ ""
+  )) %>%  ##add variable president with value "dem" and "gop"
+  select("year", "month", "gov_gop":"rep_gop", "gov_dem":"rep_dem", "president") ##remove prez_gop, prez_dem and day variable
+
+
+```
+
+
+```{r, snp, echo = TRUE}
+##upload and clean data in snp.csv
+snp_dataset = read_csv(file = "./data/snp.csv") %>% ##load the data
+  janitor::clean_names() %>%                         ##clean the data
+  separate(col = "date", 
+           sep = "/", 
+           into = c("month", "day", "year"), 
+           convert = type.convert("month", "day", "year", 
+                                  numerals = c("allow.loss"))) %>% 
+  transform(month = month.abb[month]) %>%            ##separate the data
+  select("year", "month", "day", everything())       ##arrange the data
+
+```
+
+```{r, unemployment, echo = TRUE}
+##upload and clean unemployment data
+unemployment_dataset = read_csv(file = "./data/unemployment.csv") %>% 
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to = "unemployment"
+  ) %>% 
+  janitor::clean_names()          ##clean the data
+
+```
+
+```{r, merg_pol_snp_unemplm, echo = TRUE}
+## first merge the snp and pols dataset
+merg_snp_pols_dataset = full_join(snp_dataset, 
+                                  pols_month_dataset, 
+                                  by = c("year", "month"))
+
+## then merge pols, snp and unemployment data
+merg_snp_pols_unem_dataset = left_join(merg_snp_pols_dataset, 
+                                       unemployment_dataset, 
+                                       by = c("year", "month"))
+
+
+```
 
