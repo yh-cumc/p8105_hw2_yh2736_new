@@ -29,4 +29,51 @@ trashwheel_dataset$sports_balls = round(as.integer(trashwheel_dataset$sports_bal
 
 ```
 
+```{r, precipitation2017, echo = TRUE}
+##load and clean the precipitation data of 2017
+precipitation_dataset_2017 = read_excel(path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
+                                        sheet = "2017 Precipitation", 
+                                        range = "A2:B14") %>%    ##load the precipitation data of 2017
+  na.omit() %>%                                                  ##omit rows without precipitation data
+  janitor::clean_names() %>%                                     ##clean data
+  mutate(year = c('2017', '2017', '2017', '2017',
+                  '2017', '2017', '2017', '2017',
+                  '2017', '2017', '2017', '2017'))                ##add a variable year
+
+
+
+```
+
+```{r, precipitation2018, echo = TRUE}
+##load and clean the precipitation data of 2017
+precipitation_dataset_2018 = read_excel(path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
+                                        sheet = "2018 Precipitation", 
+                                        range = "A2:B14") %>%    ##load the precipitation data of 2017
+  na.omit() %>%                                                  ##omit rows without precipitation data
+  janitor::clean_names() %>%                                     ##clean data
+  mutate(year = c('2018', '2018', '2018', '2018',
+                  '2018', '2018', '2018', '2018',
+                  '2018', '2018', '2018', '2018'))                ##add a variable year
+
+```
+
+```{r, combindataset, echo = TRUE}
+##combination the two dataset of precipitation_dataset_2017 and precipitation_dataset_2018
+precipitation_dataset = left_join(
+  precipitation_dataset_2017, 
+  precipitation_dataset_2018, 
+  by = "month",
+  suffix = c("_2017", "_2018")
+) %>% 
+  select("month", "total_2017", "total_2018") %>% 
+  rename("2017" = "total_2017", "2018" = "total_2018") 
+precipitation_dataset$month = month.name[precipitation_dataset$month]
+
+show(precipitation_dataset)
+
+```
+
+the number of observation in 2017 is `r count(precipitation_dataset_2017)`.
+the number of observation in 2018 is `r count(precipitation_dataset_2018)`.
+the total precipitation in 2018 is `r sum(precipitation_dataset_2018$total, na.rm = TRUE)`.
 
