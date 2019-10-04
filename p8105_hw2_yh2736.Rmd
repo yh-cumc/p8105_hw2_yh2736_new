@@ -90,7 +90,9 @@ summary(precipitation_dataset)
 
 In problem1, three datasets were used. Trash wheel includes information of 344 dumpster from year 2014 to 2019. For each dumpster, the dataset collects information on weight, volume, plastic bottles, polystyrene, cigarette butts, glass bottles, grocery bags, chip bags, sports balls, and homes powered.Each of these information is a independent varaible that can be summaried using the commamment of summary() that is presented in the my command line as check points. For example,the collected sport balls range from 0 to 56 with a median of 8 and IQR 5-16. The sport ball data is right skwed for the mean (11.79) is much bigger than the median (8). 
 
-In the original Trash Wheel Collection excel sheet, the precipitation was collected seperately by year. In the assigment, we are requested to upload 2017 and 2018 data, and combine these two year data. For the convenience of data revievewing, I use the left join for the wide format of dataset, and create seperate variables to represent the precipitation by year in each month. The combination can also be done in long format by stacking 2017 data on the top of 2018 data and remaining year as a variable. The wide format is my final option that shows a better view. Using the summary command, we know that the median value of precipitation was 2.145(IQR 1.285-4.103) in 2017 and 5.455(IQR 4.190-8.182). The precipitation in 2017 is much higher than that in 2018. The distribution of precipitation data in both years are closer to normal distrubuted than the sport ball data in trasj wheel if we compare the difference of meidans and means.        
+In the original Trash Wheel Collection excel sheet, the precipitation was collected seperately by year. In the assigment, we are requested to upload 2017 and 2018 data, and combine these two year data. For the convenience of data revievewing, I use the left join for the wide format of dataset, and create seperate variables to represent the precipitation by year in each month. The combination can also be done in long format by stacking 2017 data on the top of 2018 data and remaining year as a variable. The wide format is my final option that shows a better view. Using the summary command, we know that the median value of precipitation was 2.145(IQR 1.285-4.103) in 2017 and 5.455(IQR 4.190-8.182). The precipitation in 2017 is much higher than that in 2018. The distribution of precipitation data in both years are closer to normal distrubuted than the sport ball data in trasj wheel if we compare the difference of meidans and means. 
+
+In all my command, I check the integrity of data using some simple commands as the check points. Meanwhile, these commands can help to answer the questions regards data distribution. 
 
 
 # Problem 2
@@ -185,17 +187,7 @@ The dataset "snp" has 787 observations and 2 variables, indicating the closing v
 
 The dataset "unemployment" has 816 observations and 2 variables, indicating unemployment rate in each month from year 1948 to 2015. The median unemployment rate was 5.6% (IQR: 4.7-6.9%). The highest rate was 10.8% and the lowest was 2.5%. In year 2015 from JUly to December, the unemployment data was missing. 
 
-We, then, link all three individual datase togehter in two steps. 
-
-
-
-
-
-
-
-
-
-
+We, then, link all three individual datase togehter in two steps using pipeline to simplify the command process. The final database include all the information described above from each individual dataset -- year, month, day, S&P closing value, gov_gop, gov-pop, sen_gop, rep_gop,gov_dem, sen_dem, rep_dem, president, and unemployment rate. We can use this database to examine the association beween poll data and S&P or unemployment, and the assocaition between S&P and unemployment. It is a very interesting dataset. 
 
 
 # Problem 3
@@ -205,17 +197,32 @@ popular_baby_name_dataset = read_csv(file = "./data/Popular_Baby_Names.csv") %>%
   janitor::clean_names() %>% 
   distinct()
 
+####checkpoints####
+count(popular_baby_name_dataset) # 19418 before distinct; 12181 after removing duplicates #
+head(popular_baby_name_dataset,20)
+summary(popular_baby_name_dataset)
+####checkend####
+
 ##filter the male baby with "white non hispanic" and "2016"
 popular_male_baby_name_dataset = popular_baby_name_dataset %>% 
   filter(gender == "MALE") %>% 
   filter(ethnicity == "WHITE NON HISPANIC") %>% 
   filter(year_of_birth == 2016)
 
+####checkpoints####
+count(popular_male_baby_name_dataset) # 364 obs #
+head(popular_male_baby_name_dataset,20)
+summary(popular_male_baby_name_dataset)
+####checkend####
+
+
 ##produce a scatter plot showing the number of children with a name (y axis) against the rank in popularity of that name (x axis)
 plot(popular_male_baby_name_dataset$rank, popular_male_baby_name_dataset$count,
-     xlab = "the number of children with a name",
+     xlab = "the number of white non-Hispanic boys with a name",
      ylab = "the rank in popularity of that name")
-
 
 ```
 
+This is a very interesting dataset to educate myself on the popular names in America, adding new information to my knowldege pool! The final scatter plot shows among white non-Hispanic boys, the number of names (100) increases while the higher ranking (1). Although I have answered the study question, I am not very happy with this scatter plot. In my real project, I may want to show a plot with positive slope by inversing the y-axis. 
+
+Great practices for homework 2. I really enjoy it!
