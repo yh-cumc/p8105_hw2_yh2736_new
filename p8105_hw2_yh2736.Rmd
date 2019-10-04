@@ -7,9 +7,26 @@ output: github_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readxl)
+library(lubridate)
+
+```
 
 
+# question 1
+```{r, trashwheel, echo = TRUE}
+##load and clean the trashwheel dataset
+trashwheel_dataset = read_excel(path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", 
+                                sheet = "Mr. Trash Wheel",
+                                range = cell_cols("A:N")) %>%  ## load the xlsx file
+  janitor::clean_names() %>%                                   ## clean the dataset
+  na.omit()                                                    ## omit row with NULL data    
 
+trashwheel_dataset$sports_balls = round(as.integer(trashwheel_dataset$sports_balls), 
+                                        digits = 0)            ## round the sports balls to nearest inter
 
 
 ```
+
+
